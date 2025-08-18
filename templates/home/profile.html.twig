@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<title>Profil de
+			{{ app.user.fullName }}
+			- EvenmoNet</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<style>
+			/* Reprendre ta palette et styles de base */
+
+			body {
+				margin: 0;
+				font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+				background-color: #f0f4fa;
+				color: #0e2941;
+			}
+
+			header {
+				background-color: #0e2941;
+				color: #fff;
+				padding: 20px 40px;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				box-shadow: 0 3px 8px rgba(14, 41, 65, 0.4);
+				position: sticky;
+				top: 0;
+				z-index: 10;
+			}
+
+			.logo {
+				font-size: 28px;
+				font-weight: 700;
+				letter-spacing: 2px;
+				text-transform: uppercase;
+				cursor: default;
+				user-select: none;
+				color: #00bcd4;
+				text-shadow: 1px 1px 4px rgba(0, 188, 212, 0.7);
+			}
+
+			nav a,
+			nav span {
+				color: #fff;
+				text-decoration: none;
+				margin-left: 30px;
+				font-weight: 600;
+				font-size: 16px;
+				transition: color 0.3s ease;
+				cursor: pointer;
+			}
+
+			nav a:hover {
+				color: #00bcd4;
+				text-shadow: 0 0 6px #00bcd4;
+			}
+
+			nav span {
+				font-style: italic;
+				user-select: none;
+			}
+
+			nav a.logout {
+				background-color: #00bcd4;
+				padding: 6px 14px;
+				border-radius: 20px;
+				font-weight: 700;
+				margin-left: 20px;
+				transition: background-color 0.3s ease, box-shadow 0.3s ease;
+			}
+
+			nav a.logout:hover {
+				background-color: #008ba3;
+				box-shadow: 0 0 8px #008ba3;
+				color: #fff;
+			}
+
+			main {
+				max-width: 900px;
+				margin: 40px auto;
+				padding: 0 20px 80px;
+				background: #fff;
+				border-radius: 15px;
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+			}
+
+			h1 {
+				text-align: center;
+				font-size: 36px;
+				margin-bottom: 30px;
+				color: #0e2941;
+			}
+
+			.profile-details {
+				margin-bottom: 40px;
+			}
+
+			.profile-details p {
+				font-size: 18px;
+				color: #33475b;
+				margin: 8px 0;
+			}
+
+			.events-list {
+				margin-top: 20px;
+			}
+
+			.events-list h2 {
+				font-size: 28px;
+				margin-bottom: 20px;
+				color: #0e2941;
+			}
+
+			.event-item {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				background: #e1e8f7;
+				margin-bottom: 12px;
+				padding: 12px 20px;
+				border-radius: 12px;
+				font-weight: 600;
+				color: #0e2941;
+			}
+
+			.event-title {
+				flex-grow: 1;
+			}
+
+			.badge {
+				padding: 5px 12px;
+				border-radius: 20px;
+				font-size: 14px;
+				font-weight: 700;
+				color: #fff;
+				user-select: none;
+			}
+
+			.badge.approved {
+				background-color: #28a745; /* vert */
+			}
+
+			.badge.not-approved {
+				background-color: #dc3545; /* rouge */
+			}
+
+			/* Responsive */
+			@media(max-width: 768px) {
+				nav a,
+				nav span {
+					margin-left: 15px;
+					font-size: 14px;
+				}
+				.logo {
+					font-size: 22px;
+				}
+				main {
+					margin: 20px 10px 40px;
+					padding: 15px;
+				}
+			}
+
+			.tickets-list {
+				margin-top: 40px;
+			}
+
+			.tickets-list h2 {
+				font-size: 28px;
+				margin-bottom: 20px;
+				color: #0e2941;
+			}
+
+			.tickets-list .event-item {
+				background: #d0f0fd;
+				margin-bottom: 12px;
+				padding: 12px 20px;
+				border-radius: 12px;
+				font-weight: 600;
+				color: #0e2941;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+
+		</style>
+	</head>
+	<body>
+
+		<header>
+			<div class="logo">EvenmoNet</div>
+			<nav>
+				<a href="{{ path('app_home') }}">Accueil</a>
+				<a href="{{ path('app_evenements') }}">Évènements</a>
+				<a href="{{ path('app_annonce_create') }}">Organiser</a>
+				<a href="#">Contact</a>
+
+				{% if not app.user %}
+					<a href="{{ path('app_login') }}">Connexion</a>
+				{% else %}
+					{% if 'ROLE_ADMIN' in app.user.roles %}
+						<a href="{{ path('admin') }}">Dashboard</a>
+					{% endif %}
+					<a href="{{ path('app_profile') }}" style="cursor:pointer; font-weight:700; margin-left:20px;">
+						Bonjour,
+						{{ app.user.fullName }}
+					</a>
+					<a href="{{ path('app_logout') }}" class="logout">Déconnexion</a>
+				{% endif %}
+			</nav>
+		</header>
+
+		<main>
+			<h1>Mon Profil</h1>
+
+			<div class="profile-details">
+				<p>
+					<strong>Nom complet :</strong>
+					{{ app.user.fullName }}</p>
+				<p>
+					<strong>Email :</strong>
+					{{ app.user.email }}</p>
+				<!-- Ajoute d'autres infos si besoin -->
+			</div>
+
+			<section class="events-list">
+				<h2>Mes événements organisés</h2>
+
+				{% if userEvents is empty %}
+					<p>Aucun événement organisé pour le moment.</p>
+				{% else %}
+					{% for event in userEvents %}
+						<div class="event-item">
+							<div class="event-title">{{ event.titre }}</div>
+							{% if event.isApproved %}
+								<span class="badge approved">Approuvé</span>
+							{% else %}
+								<span class="badge not-approved">Non approuvé</span>
+							{% endif %}
+						</div>
+					{% endfor %}
+				{% endif %}
+			</section>
+			<section class="tickets-list">
+				<h2>Mes tickets</h2>
+
+				{% if userTickets is empty %}
+					<p>Vous n'avez acheté aucun ticket pour le moment.</p>
+				{% else %}
+					{% for ticket in userTickets %}
+						<div class="event-item">
+							<div class="event-title">{{ ticket.annonce.titre }}</div>
+							<div>
+								<small>Acheté le
+									{{ ticket.purchasedAt|date('d/m/Y H:i') }}</small>
+							</div>
+						</div>
+					{% endfor %}
+				{% endif %}
+			</section>
+
+
+		</main>
+
+		<footer>
+			&copy;
+			{{ "now"|date("Y") }}
+			EvenmoNet - Tous droits réservés.
+		</footer>
+
+	</body>
+</html>

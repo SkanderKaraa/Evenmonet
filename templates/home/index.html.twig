@@ -1,0 +1,275 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}EvenmoNet - Accueil{% endblock %}
+
+{% block body %}
+<head>
+    <style>
+        /* Base & navbar styles repris de ton profil */
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4fa;
+            color: #0e2941;
+        }
+
+        header {
+            background-color: #0e2941;
+            color: #fff;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 3px 8px rgba(14, 41, 65, 0.4);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: default;
+            user-select: none;
+            color: #00bcd4;
+            text-shadow: 1px 1px 4px rgba(0, 188, 212, 0.7);
+        }
+
+        nav a,
+        nav span {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 30px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        nav a:hover {
+            color: #00bcd4;
+            text-shadow: 0 0 6px #00bcd4;
+        }
+
+        nav span {
+            font-style: italic;
+            user-select: none;
+        }
+
+        nav a.logout {
+            background-color: #00bcd4;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            margin-left: 20px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        nav a.logout:hover {
+            background-color: #008ba3;
+            box-shadow: 0 0 8px #008ba3;
+            color: #fff;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 40px auto 80px;
+            padding: 0 20px;
+        }
+
+        /* Slider */
+        .slider {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin: 40px auto 60px;
+            overflow: hidden;
+            border-radius: 18px;
+            box-shadow: 0 6px 18px rgba(0, 188, 212, 0.2);
+        }
+        .slides {
+            position: relative;
+        }
+        .slide {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 420px;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            border-radius: 18px;
+        }
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 18px;
+        }
+        .slide.active {
+            opacity: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Sections */
+        section {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 6px 18px rgba(0, 188, 212, 0.1);
+            padding: 28px 32px;
+            margin-bottom: 48px;
+        }
+
+        section h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #0e2941;
+        }
+
+        section p {
+            font-size: 16px;
+            color: #33475b;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            user-select: none;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,188,212,0.4);
+        }
+        .btn-primary {
+            background-color: #00bcd4;
+            color: #fff;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #008ba3;
+        }
+
+        .btn-secondary {
+            background-color: #0e2941;
+            color: #fff;
+            border: none;
+            box-shadow: 0 4px 12px rgba(14, 41, 65, 0.4);
+        }
+        .btn-secondary:hover {
+            background-color: #062234;
+        }
+
+        footer {
+            background-color: #0e2941;
+            color: #fff;
+            text-align: center;
+            padding: 28px 20px;
+            font-size: 14px;
+            letter-spacing: 1.2px;
+            box-shadow: 0 -3px 10px rgba(14, 41, 65, 0.6);
+            user-select: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav a, nav span {
+                margin-left: 15px;
+                font-size: 14px;
+            }
+            .logo {
+                font-size: 22px;
+            }
+            main {
+                margin: 20px 10px 40px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<header>
+    <div class="logo">EvenmoNet</div>
+    <nav>
+        <a href="{{ path('app_home') }}">Accueil</a>
+        <a href="{{ path('app_evenements') }}">Évènements</a>
+        <a href="{{ path('app_annonce_create') }}">Organiser</a>
+        <a href="#">Contact</a>
+
+        {% if not app.user %}
+            <a href="{{ path('app_login') }}">Connexion</a>
+        {% else %}
+            {% if 'ROLE_ADMIN' in app.user.roles %}
+                <a href="{{ path('admin') }}">Dashboard</a>
+            {% endif %}
+            <a href="{{ path('app_profile') }}" style="cursor:pointer; font-weight:700; margin-left:20px;">
+                Bonjour, {{ app.user.fullName }}
+            </a>
+            <a href="{{ path('app_logout') }}" class="logout">Déconnexion</a>
+        {% endif %}
+    </nav>
+</header>
+
+<main>
+    <!-- Slider -->
+    <div class="slider">
+        <div class="slides">
+            {% for image in slides %}
+                <div class="slide {% if loop.first %}active{% endif %}">
+                    <img src="{{ asset('uploads/images/' ~ image) }}" alt="Slide {{ loop.index }}">
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Explorez -->
+    <section>
+        <h2>Découvrez les événements près de chez vous</h2>
+        <p>Explorez une large sélection d’événements passionnants, concerts, expositions, festivals, ateliers et bien plus encore.</p>
+        <a href="{{ path('app_evenements') }}" class="btn btn-primary" aria-label="Voir les événements">Explorez les événements</a>
+    </section>
+
+    <!-- Organisez -->
+    <section>
+        <h2>Organisez votre propre événement facilement</h2>
+        <p>Créez, gérez et promouvez vos événements avec notre plateforme intuitive et efficace. Que ce soit un anniversaire, un spectacle ou une conférence, EvenmoNet vous accompagne.</p>
+        <a href="{{ path('app_annonce_create') }}" class="btn btn-primary" aria-label="Organiser un événement">Organisez votre événement</a>
+    </section>
+
+    <!-- Contactez-nous -->
+    <section>
+        <h2>Besoin d’aide ou d’informations ?</h2>
+        <p>Notre équipe est à votre écoute pour répondre à toutes vos questions. N’hésitez pas à nous contacter pour toute demande ou assistance.</p>
+        <a href="#" class="btn btn-secondary" aria-label="Nous contacter">Nous contacter</a>
+    </section>
+
+   
+
+</main>
+
+<footer>
+    &copy; {{ "now"|date("Y") }} EvenmoNet - Tous droits réservés.
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const slides = document.querySelectorAll('.slide');
+        let currentIndex = 0;
+        if (slides.length > 1) {
+            setInterval(() => {
+                slides[currentIndex].classList.remove('active');
+                currentIndex = (currentIndex + 1) % slides.length;
+                slides[currentIndex].classList.add('active');
+            }, 3000);
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8"/>
+		<title>EvenmoNet - Organiser un événement</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+		<style>
+			/* Reset scroll */
+			html,
+			body {
+				margin: 0;
+				padding: 0;
+				height: 100vh;
+				overflow: hidden; /* plus de scroll */
+				font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+				background-color: #f0f4fa;
+				color: #0e2941;
+			}
+
+			header {
+				background-color: #0e2941;
+				color: #fff;
+				padding: 20px 40px;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				box-shadow: 0 3px 8px rgba(14, 41, 65, 0.4);
+				position: sticky;
+				top: 0;
+				z-index: 10;
+			}
+
+			.logo {
+				font-size: 28px;
+				font-weight: 700;
+				letter-spacing: 2px;
+				text-transform: uppercase;
+				cursor: default;
+				user-select: none;
+				color: #00bcd4;
+				text-shadow: 1px 1px 4px rgba(0, 188, 212, 0.7);
+			}
+
+			nav a,
+			nav span {
+				color: #fff;
+				text-decoration: none;
+				margin-left: 30px;
+				font-weight: 600;
+				font-size: 16px;
+				transition: color 0.3s ease;
+				cursor: pointer;
+			}
+
+			nav a:hover {
+				color: #00bcd4;
+				text-shadow: 0 0 6px #00bcd4;
+			}
+
+			nav span {
+				font-style: italic;
+				user-select: none;
+			}
+
+			nav a.logout {
+				background-color: #00bcd4;
+				padding: 6px 14px;
+				border-radius: 20px;
+				font-weight: 700;
+				margin-left: 20px;
+				transition: background-color 0.3s ease, box-shadow 0.3s ease;
+			}
+
+			nav a.logout:hover {
+				background-color: #008ba3;
+				box-shadow: 0 0 8px #008ba3;
+				color: #fff;
+			}
+
+			/* Container principal, taille fixe */
+			.container {
+				max-width: 960px;
+				margin: 20px auto;
+				background: #fff;
+				border-radius: 15px;
+				box-shadow: 0 6px 20px rgba(14, 41, 65, 0.15);
+				padding: 30px 40px;
+				height: calc(100vh - 100px); /* espace total disponible - header + marge */
+				overflow-y: auto; /* scroll dans le container si besoin */
+				box-sizing: border-box;
+			}
+
+			h1 {
+				text-align: center;
+				color: #0e2941;
+				margin-bottom: 30px;
+				font-weight: 700;
+				font-size: 28px;
+				text-transform: uppercase;
+				letter-spacing: 1.2px;
+			}
+
+			form {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 24px 40px;
+			}
+
+			label {
+				display: block;
+				font-weight: 600;
+				margin-bottom: 6px;
+				color: #234666;
+			}
+
+			input[type="text"],
+			input[type="number"],
+			input[type="date"],
+			textarea,
+			.vich-image {
+				width: 100%;
+				padding: 14px 16px;
+				border-radius: 10px;
+				border: 2px solid #e1e8f7;
+				font-size: 15px;
+				color: #0e2941;
+				box-sizing: border-box;
+				transition: border-color 0.3s ease;
+				font-family: inherit;
+				resize: vertical;
+			}
+
+			input[type="text"]:focus,
+			input[type="number"]:focus,
+			input[type="date"]:focus,
+			textarea:focus,
+			.vich-image:focus {
+				border-color: #00bcd4;
+				outline: none;
+				box-shadow: 0 0 8px #00bcd4;
+			}
+
+			textarea {
+				min-height: 100px;
+			}
+
+			/* Pour que textarea prenne toute la hauteur disponible dans sa colonne */
+			textarea {
+				height: 100%;
+			}
+
+			/* Étendre le widget image pour qu'il ait une bonne hauteur */
+			.vich-image {
+				min-height: 40px;
+			}
+
+			/* Les boutons prennent toute la largeur sur les 2 colonnes */
+			.form-actions {
+				grid-column: 1 / -1;
+				margin-top: 20px;
+				text-align: center;
+			}
+
+			button {
+				background-color: #0e2941;
+				color: #ffffff;
+				padding: 16px 60px;
+				border: none;
+				border-radius: 12px;
+				font-size: 16px;
+				font-weight: 700;
+				cursor: pointer;
+				transition: background-color 0.3s ease;
+				text-transform: uppercase;
+				letter-spacing: 1px;
+			}
+
+			button:hover {
+				background-color: #007a8c;
+				box-shadow: 0 0 10px #007a8c;
+			}
+
+			a.back-link {
+				display: block;
+				margin-top: 28px;
+				text-align: center;
+				color: #00bcd4;
+				text-decoration: none;
+				font-weight: 600;
+				font-size: 14px;
+				transition: color 0.3s ease;
+			}
+
+			a.back-link:hover {
+				color: #007a8c;
+				text-decoration: underline;
+			}
+
+			.form-errors {
+				background: #ffeded;
+				border: 1px solid #ff9a9a;
+				color: #b00020;
+				padding: 12px 16px;
+				margin-bottom: 20px;
+				border-radius: 10px;
+				font-weight: 600;
+				grid-column: 1 / -1;
+			}
+
+			/* Responsive : passer en 1 colonne si trop petit */
+			@media(max-width: 720px) {
+				.container {
+					height: auto;
+					overflow: visible;
+					margin: 20px 15px;
+					padding: 30px 20px;
+				}
+				form {
+					grid-template-columns: 1fr;
+				}
+				.form-actions,
+				.form-errors {
+					grid-column: 1;
+				}
+			}
+		</style>
+	</head>
+	<body>
+
+		<header>
+			<div class="logo">EvenmoNet</div>
+			<nav>
+				<a href="{{ path('app_home') }}">Accueil</a>
+				<a href="{{ path('app_evenements') }}">Événements</a>
+				<a href="{{ path('app_annonce_create') }}" style="color:#00bcd4; text-shadow: 0 0 6px #00bcd4;">Organiser</a>
+				<a href="#">Contact</a>
+
+				{% if not app.user %}
+					<a href="{{ path('app_login') }}">Connexion</a>
+				{% else %}
+					{% if 'ROLE_ADMIN' in app.user.roles %}
+						<a href="{{ path('admin') }}">Dashboard</a>
+					{% endif %}
+					<a href="{{ path('app_profile') }}" style="cursor:pointer; font-weight:700; margin-left:20px;">
+						Bonjour,
+						{{ app.user.fullName }}
+					</a>
+					<a href="{{ path('app_logout') }}" class="logout">Déconnexion</a>
+				{% endif %}
+			</nav>
+		</header>
+
+		<div class="container">
+			<h1>Soumettre un événement</h1>
+
+			{% if form.vars.errors|length > 0 %}
+				<div class="form-errors">
+					{{ form_errors(form) }}
+				</div>
+			{% endif %}
+
+			{{ form_start(form) }}
+
+			<div>
+				<label for="{{ form.titre.vars.id }}">Titre</label>
+				{{ form_widget(form.titre, {attr: {placeholder: 'Nom de l\'événement'}}) }}
+            {{ form_errors(form.titre) }}
+        </div>
+
+        <div>
+            <label for="{{ form.prix.vars.id }}">Prix</label>
+            {{ form_widget(form.prix, {attr: {placeholder: 'Prix en DT'}}) }}
+            {{ form_errors(form.prix) }}
+        </div>
+
+        <div>
+            <label for="{{ form.description.vars.id }}">Description</label>
+            {{ form_widget(form.description, {attr: {placeholder: 'Décrivez votre événement'}}) }}
+            {{ form_errors(form.description) }}
+        </div>
+
+        <div>
+            <label for="{{ form.ville.vars.id }}">Ville</label>
+            {{ form_widget(form.ville, {attr: {placeholder: 'Ville où se déroule l\'événement'}}) }}
+				{{ form_errors(form.ville) }}
+			</div>
+
+			<div>
+				<label for="{{ form.createdAt.vars.id }}">Date de l'événement</label>
+				{{ form_widget(form.createdAt) }}
+				{{ form_errors(form.createdAt) }}
+			</div>
+
+			<div>
+				<label for="{{ form.imageFile.vars.id }}">Image</label>
+				{{ form_widget(form.imageFile) }}
+				{{ form_errors(form.imageFile) }}
+			</div>
+
+			<div class="form-actions">
+				<button type="submit">Envoyer la demande</button>
+			</div>
+
+			{{ form_end(form) }}
+
+			<a href="{{ path('app_home') }}" class="back-link">&larr; Retour à l'accueil</a>
+		</div>
+
+	</body>
+</html>

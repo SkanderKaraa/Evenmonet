@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>EvenmoNet - Connexion</title>
+    <link rel="stylesheet" href="{{ asset('css/styles.css') }}" />
+    <style>
+      /* Style simple pour centrer le logo et l'apparence */
+      .logo {
+        font-size: 28px;
+        font-weight: bold;
+        color: #0e2941;
+        margin-bottom: 30px;
+        font-family: 'Segoe UI', sans-serif;
+        text-align: center;
+      }
+    </style>
+</head>
+<body>
+    <div class="login-page">
+        <div class="form">
+            <div class="logo">EvenmoNet</div>
+            <form action="{{ path('app_login') }}" method="post">
+                <h2>Connexion</h2>
+
+                {% if error %}
+                    <div style="color:red;">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                {% endif %}
+
+                <input type="email" name="_username" placeholder="Email" value="{{ last_username }}" required autofocus />
+                <input type="password" name="_password" placeholder="Mot de passe" required />
+
+                <button type="submit">Se connecter</button>
+                <p>Pas encore inscrit ? <a href="{{ path('app_register') }}">Créer un compte</a></p>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

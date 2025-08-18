@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8"/>
+		<title>EvenmoNet - Événements</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<style>
+			/* Palette : bleu foncé #0e2941, blanc #fff, turquoise #00bcd4, gris clair #e1e8f7, gris foncé #333 */
+
+			body {
+				margin: 0;
+				font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+				background-color: #f0f4fa;
+				color: #0e2941;
+			}
+
+			header {
+				background-color: #0e2941;
+				color: #fff;
+				padding: 20px 40px;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				box-shadow: 0 3px 8px rgba(14, 41, 65, 0.4);
+				position: sticky;
+				top: 0;
+				z-index: 10;
+			}
+
+			.logo {
+				font-size: 28px;
+				font-weight: 700;
+				letter-spacing: 2px;
+				text-transform: uppercase;
+				cursor: default;
+				user-select: none;
+				color: #00bcd4;
+				text-shadow: 1px 1px 4px rgba(0, 188, 212, 0.7);
+			}
+
+			nav a,
+			nav span {
+				color: #fff;
+				text-decoration: none;
+				margin-left: 30px;
+				font-weight: 600;
+				font-size: 16px;
+				transition: color 0.3s ease;
+				cursor: pointer;
+			}
+
+			nav a:hover {
+				color: #00bcd4;
+				text-shadow: 0 0 6px #00bcd4;
+			}
+
+			nav span {
+				font-style: italic;
+				user-select: none;
+			}
+
+			nav a.logout {
+				background-color: #00bcd4;
+				padding: 6px 14px;
+				border-radius: 20px;
+				font-weight: 700;
+				margin-left: 20px;
+				transition: background-color 0.3s ease, box-shadow 0.3s ease;
+			}
+
+			nav a.logout:hover {
+				background-color: #008ba3;
+				box-shadow: 0 0 8px #008ba3;
+				color: #fff;
+			}
+
+			.search-bar {
+				margin: 40px auto 30px;
+				text-align: center;
+				max-width: 600px;
+			}
+
+			.search-bar input {
+				width: 100%;
+				max-width: 600px;
+				padding: 18px 25px;
+				border-radius: 40px;
+				border: 2px solid #0e2941;
+				font-size: 18px;
+				color: #0e2941;
+				box-shadow: 0 0 10px rgba(14, 41, 65, 0.1);
+				transition: all 0.3s ease;
+				outline-offset: 2px;
+			}
+
+			.search-bar input::placeholder {
+				color: #a1b3cc;
+				font-style: italic;
+			}
+
+			.search-bar input:focus {
+				border-color: #00bcd4;
+				box-shadow: 0 0 12px #00bcd4;
+				outline: none;
+			}
+
+			.content {
+				max-width: 960px;
+				margin: 0 auto 60px;
+				padding: 20px;
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+				gap: 30px;
+			}
+
+			.event-card {
+				background: #fff;
+				border-radius: 15px;
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+				overflow: hidden;
+				display: flex;
+				flex-direction: column;
+				transition: transform 0.2s ease;
+				cursor: pointer;
+			}
+			.event-card:hover {
+				transform: translateY(-5px);
+				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+			}
+			.event-image {
+				width: 100%;
+				height: 180px;
+				object-fit: cover;
+				background-color: #e1e8f7;
+			}
+			.event-content {
+				padding: 15px 20px;
+				flex-grow: 1;
+				display: flex;
+				flex-direction: column;
+			}
+			.event-title {
+				font-size: 22px;
+				color: #0e2941;
+				margin: 0 0 8px;
+				font-weight: 700;
+			}
+			.event-info {
+				font-size: 14px;
+				color: #33475b;
+				margin-bottom: 12px;
+				font-weight: 600;
+			}
+			.event-description {
+				flex-grow: 1;
+				font-size: 15px;
+				color: #555;
+				line-height: 1.4;
+				margin-bottom: 15px;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				display: -webkit-box;
+				-webkit-line-clamp: 4;
+				-webkit-box-orient: vertical;
+			}
+			.event-price {
+				font-size: 16px;
+				font-weight: 700;
+				color: #00bcd4;
+			}
+
+			footer {
+				background-color: #0e2941;
+				color: #fff;
+				text-align: center;
+				padding: 25px 20px;
+				font-size: 14px;
+				letter-spacing: 1px;
+				box-shadow: 0 -3px 8px rgba(14, 41, 65, 0.4);
+			}
+
+			/* Responsive */
+			@media(max-width: 768px) {
+				.search-bar input {
+					width: 90%;
+				}
+
+				nav a,
+				nav span {
+					margin-left: 15px;
+					font-size: 14px;
+				}
+
+				.logo {
+					font-size: 22px;
+				}
+
+				.content {
+					grid-template-columns: 1fr;
+					padding: 10px;
+				}
+			}
+
+			.modal {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background-color: rgba(14, 41, 65, 0.8);
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				z-index: 1000;
+				overflow: hidden;
+			}
+
+			.modal-content {
+				background: #fff;
+				padding: 30px;
+				border-radius: 15px;
+				max-width: 600px;
+				width: 90%;
+				max-height: 90vh; /* Limite à 90% de la hauteur de l'écran */
+				overflow-y: auto; /* Active le scroll si besoin */
+				position: relative;
+				text-align: center;
+				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+			}
+
+			.modal-image {
+				width: 100%;
+				max-height: 300px;
+				object-fit: cover;
+				margin-bottom: 20px;
+				border-radius: 10px;
+			}
+
+			.modal-info {
+				color: #33475b;
+				font-weight: 600;
+			}
+
+			.modal-price {
+				font-size: 18px;
+				font-weight: bold;
+				color: #00bcd4;
+				margin: 15px 0;
+			}
+
+			.modal-actions {
+				margin-top: 20px;
+				display: flex;
+				justify-content: space-between;
+				gap: 20px;
+			}
+
+			.modal-close-btn,
+			.buy-ticket-btn {
+				background-color: #0e2941;
+				color: white;
+				border: none;
+				padding: 12px 20px;
+				border-radius: 8px;
+				font-weight: bold;
+				cursor: pointer;
+				text-decoration: none;
+				transition: background-color 0.3s;
+			}
+
+			.modal-close-btn:hover,
+			.buy-ticket-btn:hover {
+				background-color: #008ba3;
+			}
+
+			.close {
+				position: absolute;
+				right: 20px;
+				top: 10px;
+				font-size: 24px;
+				cursor: pointer;
+				color: #0e2941;
+			}
+
+			.no-scroll {
+				overflow: hidden;
+				height: 100vh;
+			}
+
+			.no-result-message {
+				color: #555;
+				font-size: 18px;
+				text-align: center;
+				margin-top: 40px;
+				font-weight: 600;
+				font-style: italic;
+			}
+
+		</style>
+	</head>
+	<body>
+
+		<header>
+			<div class="logo">EvenmoNet</div>
+			<nav>
+				<a href="{{ path('app_home') }}">Accueil</a>
+				<a href="{{ path('app_evenements') }}" style="color:#00bcd4; text-shadow: 0 0 6px #00bcd4;">Événements</a>
+				<a href="{{ path('app_annonce_create') }}">Organiser</a>
+				<a href="#">Contact</a>
+
+				{% if not app.user %}
+					<a href="{{ path('app_login') }}">Connexion</a>
+				{% else %}
+					{% if 'ROLE_ADMIN' in app.user.roles %}
+						<a href="{{ path('admin') }}">Dashboard</a>
+					{% endif %}
+					<a href="{{ path('app_profile') }}" style="cursor:pointer; font-weight:700; margin-left:20px;">
+						Bonjour,
+						{{ app.user.fullName }}
+					</a>
+					<a href="{{ path('app_logout') }}" class="logout">Déconnexion</a>
+				{% endif %}
+			</nav>
+		</header>
+
+		<div class="search-bar">
+			<input type="text" placeholder="Rechercher un événement...">
+		</div>
+
+		<section class="content">
+			{% if annonces is empty %}
+				<p style="text-align: center; font-size: 18px; color: #00bcd4; margin-top: 50px; font-weight: 600;">
+					Aucun événement pour le moment.<br>
+					Soyez le premier à organiser un événement et faites vibrer EvenmoNet !
+				</p>
+			{% else %}
+				{% for annonce in annonces %}
+					<article class="event-card" data-id="{{ annonce.id }}" data-description="{{ annonce.description|e('html_attr') }}">
+						{% if annonce.image %}
+							<img src="{{ asset('uploads/images/' ~ annonce.image) }}" alt="{{ annonce.titre }}" class="event-image"/>
+						{% else %}
+							<div class="event-image"></div>
+						{% endif %}
+						<div class="event-content">
+							<h2 class="event-title">{{ annonce.titre }}</h2>
+							<div class="event-info">{{ annonce.ville }}
+								&bull;
+								{{ annonce.createdAt|date('d/m/Y') }}</div>
+							<div class="event-description">
+								{{ annonce.description|length > 200 ? annonce.description|slice(0, 200) ~ '...' : annonce.description }}
+							</div>
+							<div class="event-price">{{ annonce.prix }}
+								DT</div>
+						</div>
+					</article>
+				{% endfor %}
+			{% endif %}
+		</section>
+
+		<div id="eventModal" class="modal" style="display:none;">
+			<div class="modal-content">
+				<img id="modalImage" src="" alt="" class="modal-image"/>
+				<h2 id="modalTitle"></h2>
+				<p class="modal-info" id="modalVilleDate"></p>
+				<p id="modalDescription"></p>
+				<p class="modal-price" id="modalPrix"></p>
+				<div class="modal-actions">
+					<button class="modal-close-btn">Fermer</button>
+
+					{% if app.user and modalAnnonceId is defined and modalAnnonceId in boughtAnnonceIds %}
+						<button class="buy-ticket-btn" disabled style="background-color: gray; cursor: default;">
+							Acheté
+						</button>
+					{% else %}
+						<a href="#" class="buy-ticket-btn" onclick="event.stopPropagation()">Acheter mon ticket</a>
+					{% endif %}
+				</div>
+
+			</div>
+		</div>
+
+		<footer>
+			&copy;
+			{{ "now"|date("Y") }}
+			EvenmoNet - Tous droits réservés.
+		</footer>
+
+		<script>
+			document.addEventListener('DOMContentLoaded', () => {
+const searchInput = document.querySelector('.search-bar input');
+const eventCards = document.querySelectorAll('.event-card');
+
+// Récupération du bouton dans la modal
+let buyTicketBtn = document.querySelector('.buy-ticket-btn');
+
+// Tableau des annonces achetées (à injecter depuis Twig)
+const ticketsAchetes = {{ ticketsAchetes|json_encode|raw }};
+
+searchInput.addEventListener('input', () => {
+const filter = searchInput.value.toLowerCase();
+
+eventCards.forEach(card => {
+const title = card.querySelector('.event-title').innerText.toLowerCase();
+
+if (title.includes(filter)) {
+card.style.display = '';
+} else {
+card.style.display = 'none';
+}
+});
+
+// Message si aucun résultat
+const contentSection = document.querySelector('.content');
+const anyVisible = Array.from(eventCards).some(card => card.style.display !== 'none');
+
+let noResultMsg = contentSection.querySelector('.no-result-message');
+if (! anyVisible) {
+if (! noResultMsg) {
+noResultMsg = document.createElement('p');
+noResultMsg.classList.add('no-result-message');
+noResultMsg.innerText = "😕 Aucun événement ne correspond à votre recherche. Essayez un autre mot-clé.";
+contentSection.appendChild(noResultMsg);
+}
+} else if (noResultMsg) {
+noResultMsg.remove();
+}
+});
+
+// Gestion ouverture modal
+eventCards.forEach(card => {
+card.addEventListener('click', () => {
+const title = card.querySelector('.event-title').innerText;
+const villeDate = card.querySelector('.event-info').innerText;
+const description = card.dataset.description;
+const price = card.querySelector('.event-price').innerText;
+const image = card.querySelector('.event-image') ?. getAttribute('src') || '';
+const id = card.dataset.id;
+
+document.getElementById('modalTitle').innerText = title;
+document.getElementById('modalVilleDate').innerText = villeDate;
+document.getElementById('modalDescription').innerHTML = description.replace(/\n/g, "<br>");
+document.getElementById('modalPrix').innerText = price;
+document.getElementById('modalImage').src = image;
+
+// Remplacer ou modifier le bouton selon si ticket déjà acheté
+const modalActions = document.querySelector('.modal-actions');
+
+// Supprimer le bouton actuel s'il existe
+if (buyTicketBtn) {
+buyTicketBtn.remove();
+}
+
+if (ticketsAchetes.includes(Number(id))) { // Créer un bouton désactivé "Acheté"
+const boughtBtn = document.createElement('button');
+boughtBtn.classList.add('buy-ticket-btn');
+boughtBtn.disabled = true;
+boughtBtn.style.backgroundColor = 'gray';
+boughtBtn.style.cursor = 'default';
+boughtBtn.textContent = 'Acheté';
+modalActions.appendChild(boughtBtn);
+buyTicketBtn = boughtBtn;
+} else { // Créer un lien actif pour acheter
+const buyBtn = document.createElement('a');
+buyBtn.classList.add('buy-ticket-btn');
+buyBtn.href = "/annonce/acheter-ticket/" + id;
+buyBtn.textContent = 'Acheter mon ticket';
+buyBtn.addEventListener('click', e => e.stopPropagation());
+modalActions.appendChild(buyBtn);
+buyTicketBtn = buyBtn;
+}
+
+document.getElementById('eventModal').style.display = 'flex';
+document.body.classList.add('no-scroll');
+});
+});
+
+function closeModal() {
+document.getElementById('eventModal').style.display = 'none';
+document.body.classList.remove('no-scroll');
+}
+
+document.querySelector('.modal-close-btn').addEventListener('click', closeModal);
+const closeBtn = document.querySelector('.close');
+if (closeBtn) {
+closeBtn.addEventListener('click', closeModal);
+}
+});
+		</script>
+
+
+	</body>
+</html>
