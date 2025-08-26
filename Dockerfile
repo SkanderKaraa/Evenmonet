@@ -2,7 +2,7 @@ FROM php:8.2-apache
 
 # Installer dépendances système
 RUN apt-get update && apt-get install -y \
-    libpq-dev zip unzip git \
+    libpq-dev zip unzip git wget \
     && docker-php-ext-install pdo pdo_pgsql \
     && a2enmod rewrite
 
@@ -11,6 +11,12 @@ COPY .docker/vhost.conf /etc/apache2/sites-available/000-default.conf
 
 # Installer Composer
 COPY --from=composer:2.7 /usr/bin/composer /usr/local/bin/composer
+
+# Installer Sonar Scanner
+RUN wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.9.3.6956-linux.zip \
+    && unzip sonar-scanner-cli-4.9.3.6956-linux.zip -d /opt \
+    && ln -s /opt/sonar-scanner-4.9.3.6956-linux/bin/sonar-scanner /usr/local/bin/sonar-scanner \
+    && rm sonar-scanner-cli-4.9.3.6956-linux.zip
 
 # Définir le dossier de travail
 WORKDIR /var/www/html
