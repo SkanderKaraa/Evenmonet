@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://ton-repo.git'
+                git branch: 'main', url: 'https://github.com/SkanderKaraa/Evenmonet.git'
             }
         }
 
