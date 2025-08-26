@@ -36,8 +36,6 @@ services:
     volumes:
       - jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock  # 🔑 Donne accès à Docker de l’hôte
-      - /usr/bin/docker:/usr/bin/docker           # 🔑 Binaire docker dispo dans Jenkins
-
 volumes:
   db_data:
   jenkins_home:
