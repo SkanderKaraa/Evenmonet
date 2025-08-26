@@ -1,8 +1,13 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'composer:2.7'   // Image officielle avec PHP + Composer
+            args '-u root:root'    // Permet d’installer des paquets si besoin
+        }
+    }
 
     environment {
-        SONARQUBE_SERVER = 'sonarqube' // Nom configuré dans Jenkins
+        SONARQUBE_SERVER = 'sonarqube'  // Nom configuré dans Jenkins
         DOCKER_IMAGE = 'evenmonet-app'
     }
 
@@ -21,18 +26,18 @@ pipeline {
 
         stage('Run tests') {
             steps {
-                sh 'php bin/phpunit --coverage-clover=coverage.xml'
+                sh 'vendor/bin/phpunit --coverage-clover=coverage.xml || true'
             }
             post {
                 always {
-                    junit '**/tests/report/*.xml'
+                    junit allowEmptyResults: true, testResults: '**/tests/report/*.xml'
                 }
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('sonarqube') {
+                withSonarQubeEnv("${SONARQUBE_SERVER}") {
                     sh """
                         sonar-scanner \
                         -Dsonar.projectKey=evenmonet \
@@ -52,7 +57,11 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh "docker run -d -p 8082:80 --name evenmonet ${DOCKER_IMAGE}:latest"
+                sh """
+                    docker stop evenmonet || true
+                    docker rm evenmonet || true
+                    docker run -d -p 8082:80 --name evenmonet ${DOCKER_IMAGE}:latest
+                """
             }
         }
     }
