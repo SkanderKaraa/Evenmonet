@@ -1,10 +1,10 @@
 pipeline {
-    agent any
+    agent any  // On utilise le conteneur Jenkins existant
 
     environment {
         SONARQUBE_SERVER = 'sonarqube'
         DOCKER_IMAGE = 'evenmonet-app'
-        PHP_CONTAINER = 'evenmonet_php'
+        PHP_CONTAINER = 'evenmonet_php'  // Conteneur PHP défini dans docker-compose
     }
 
     stages {
@@ -16,20 +16,26 @@ pipeline {
 
         stage('Install dependencies') {
             steps {
+                // Exécuter Composer directement dans le conteneur PHP
                 sh "docker exec ${PHP_CONTAINER} composer install --no-interaction --prefer-dist"
             }
         }
 
         stage('SonarQube Analysis') {
-            sh """
-                docker run --rm \
-                -e SONAR_HOST_URL="http://localhost:9000" \
-                -e SONAR_LOGIN="${env.sqp_9195515ca50111db8c8dbbd15a969594ea5dfccc}" \
-                -v "\$PWD:/usr/src" \
-                sonarsource/sonar-scanner-cli \
-                -Dsonar.projectKey=evenmonet \
-                -Dsonar.sources=src
-            """
+            steps {
+                withSonarQubeEnv("${SONARQUBE_SERVER}") {
+                    sh """
+                        docker run --rm \
+                        -e SONAR_HOST_URL=${env.SONAR_HOST_URL} \
+                        -e SONAR_LOGIN=${env.SONAR_AUTH_TOKEN} \
+                        -v "\${PWD}:/usr/src" \
+                        sonarsource/sonar-scanner-cli \
+                        -Dsonar.projectKey=evenmonet \
+                        -Dsonar.sources=src \
+                        -Dsonar.php.coverage.reportPaths=coverage.xml
+                    """
+                }
+            }
         }
 
 
