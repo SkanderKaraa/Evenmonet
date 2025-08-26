@@ -37,7 +37,6 @@ services:
       - DOCKER_HOST=tcp://host.docker.internal:2375
     volumes:
       - jenkins_home:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock  # 🔑 Donne accès à Docker de l’hôte
 volumes:
   db_data:
   jenkins_home:
