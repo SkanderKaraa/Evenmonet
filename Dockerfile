@@ -15,8 +15,11 @@ COPY --from=composer:2.7 /usr/bin/composer /usr/local/bin/composer
 # Installer Sonar Scanner
 RUN wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.9.3.6956-linux.zip \
     && unzip sonar-scanner-cli-4.9.3.6956-linux.zip -d /opt \
-    && ln -s /opt/sonar-scanner-4.9.3.6956-linux/bin/sonar-scanner /usr/local/bin/sonar-scanner \
     && rm sonar-scanner-cli-4.9.3.6956-linux.zip
+
+# Définir SonarScanner dans le PATH
+ENV SONAR_SCANNER_HOME=/opt/sonar-scanner-4.9.3.6956-linux
+ENV PATH="$SONAR_SCANNER_HOME/bin:$PATH"
 
 # Définir le dossier de travail
 WORKDIR /var/www/html

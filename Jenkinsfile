@@ -21,17 +21,17 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv("${SONARQUBE_SERVER}") {
-                    sh """
-                        docker exec ${PHP_CONTAINER} sonar-scanner \
-                        -Dsonar.projectKey=evenmonet \
-                        -Dsonar.sources=src \
-                        -Dsonar.host.url=http://localhost:9000
-                    """
-                }
-            }
+            sh """
+                docker run --rm \
+                -e SONAR_HOST_URL="http://localhost:9000" \
+                -e SONAR_LOGIN="${env.sqp_9195515ca50111db8c8dbbd15a969594ea5dfccc}" \
+                -v "\$PWD:/usr/src" \
+                sonarsource/sonar-scanner-cli \
+                -Dsonar.projectKey=evenmonet \
+                -Dsonar.sources=src
+            """
         }
+
 
         stage('Build Docker Image') {
             steps {
