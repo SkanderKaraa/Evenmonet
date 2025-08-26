@@ -26,5 +26,18 @@ services:
     ports:
       - "5432:5432"
 
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: evenmonet_jenkins
+    user: root
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock  # 🔑 Donne accès à Docker de l’hôte
+      - /usr/bin/docker:/usr/bin/docker           # 🔑 Binaire docker dispo dans Jenkins
+
 volumes:
   db_data:
+  jenkins_home:
